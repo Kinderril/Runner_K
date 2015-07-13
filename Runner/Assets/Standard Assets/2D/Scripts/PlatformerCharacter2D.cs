@@ -17,7 +17,7 @@ namespace UnityStandardAssets._2D
         private Transform m_CeilingCheck;   // A position marking where to check for ceilings
         const float k_CeilingRadius = .01f; // Radius of the overlap circle to determine if the player can stand up
         private Animator m_Anim;            // Reference to the player's animator component.
-        private Rigidbody2D m_Rigidbody2D;
+        public Rigidbody2D m_Rigidbody2D;
         private bool m_FacingRight = true;  // For determining which way the player is currently facing.
 
         private void Awake()
@@ -46,6 +46,10 @@ namespace UnityStandardAssets._2D
 
             // Set the vertical animation
             m_Anim.SetFloat("vSpeed", m_Rigidbody2D.velocity.y);
+            /*if (transform.position.y < -5)
+            {
+                Destroy(gameObject);
+            }*/
         }
 
 

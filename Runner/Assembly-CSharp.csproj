@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Main\Conrtollers\LevelController.cs" />
+     <Compile Include="Assets\Main\Conrtollers\MainController.cs" />
      <Compile Include="Assets\Main\Hero\Checker.cs" />
      <Compile Include="Assets\Main\Hero\Platformer2DUserControl.cs" />
      <Compile Include="Assets\Main\Level\Block.cs" />

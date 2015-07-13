@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Threading;
 using UnityStandardAssets._2D;
+using Random = System.Random;
 
 public class LevelController : Singleton<LevelController>
 {
@@ -13,6 +15,13 @@ public class LevelController : Singleton<LevelController>
     public Transform block2;
     public bool isRotating = false;
     public float curRotateAngel = 0;
+    public Random rnd = new Random(8765);
+    public float maxY;
+    public float minY;
+    public float JumpHeight;
+    public float JumpWidth;
+    private const float rndConst = 1000;
+
 
     public Block LastBlock
     {
@@ -41,6 +50,12 @@ public class LevelController : Singleton<LevelController>
         _lastBlock.transform.position = Vector3.zero;
     }
 
+    public void Reset()
+    {
+        var v = hero.transform.position;
+        hero.transform.position = new Vector3(v.x + 1,maxY);
+        hero.m_Rigidbody2D.velocity = Vector2.zero;
+    }
     private void RemoveBlock(Block _lastBlock)
     {
 
@@ -86,12 +101,37 @@ public class LevelController : Singleton<LevelController>
         
         var block = Instantiate(BlockPrefab.gameObject).GetComponent<Block>();
         block.transform.SetParent(transform,true);
-        int deltaX = 1;
+
+        var newY = GetRandom(Mathf.Clamp(oldPos.y + JumpHeight, minY, maxY), Mathf.Clamp(oldPos.y - JumpHeight, minY, maxY));
+        float deltaX;
+        if (newY > oldPos.y)
+        {
+            deltaX = JumpWidth + (JumpWidth-(newY-oldPos.y))*JumpHeight/JumpWidth;
+        }
+        else
+        {
+            deltaX = JumpWidth*2 + (oldPos.y - newY)*JumpWidth/oldPos.y;
+        }
         oldPos.x = deltaX + oldPos.x + block.width/2;
+        oldPos.y = newY;
         block.transform.position = oldPos;
         LastBlock = block;
+        Debug.Log(oldPos);
 
     }
+
+    public float GetRandom(float a, float b)
+    {
+
+        return UnityEngine.Random.Range(a, b);
+    }
+
+    /*static float NextFloat(Random random,float a,float b)
+    {
+        double mantissa = (random.NextDouble() * 2.0) - 1.0;
+        double exponent = Math.Pow(2.0, random.Next(a, b));
+        return (float)(mantissa * exponent);
+    }*/
 
 	// Use this for initialization
 	void Start () {
