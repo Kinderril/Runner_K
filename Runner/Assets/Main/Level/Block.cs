@@ -5,7 +5,8 @@ public class Block : MonoBehaviour {
 
 	// Use this for initialization
     public float width = 4;
-    public float height = 2;
+    public float heightL = 1;
+    public float heightR = 1;
 
 	void Start () {
 	

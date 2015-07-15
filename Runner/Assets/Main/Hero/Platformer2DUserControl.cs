@@ -29,6 +29,7 @@ public class Platformer2DUserControl : MonoBehaviour
         }
         else
         {
+            m_Jump = true;
             LevelController.Instance.StartRotate();
         }
     }
