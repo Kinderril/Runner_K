@@ -23,7 +23,7 @@ public class LevelController : Singleton<LevelController>
     public float JumpWidth;
     private const float rndConst = 1000;
     public Block currentBlock;
-
+    private Vector3 pointOfRotate;
 
     public Block LastBlock
     {
@@ -73,14 +73,14 @@ public class LevelController : Singleton<LevelController>
             var block2rotate = Instantiate(blockP.gameObject).GetComponent<Block>();
             block2rotate.transform.SetParent(transform);
             block2rotate.transform.localRotation = Quaternion.Euler(new Vector3(0,90,0));
-            block2rotate.transform.localPosition = new Vector3(currentBlock.transform.localPosition.x + JumpWidth * 1.5f, 0, currentBlock.width);
+            block2rotate.transform.localPosition = new Vector3(currentBlock.transform.localPosition.x + currentBlock.GetComponent<Block>().width, 0, currentBlock.width);
             block1 = currentBlock.transform;
             block2 = block2rotate.transform;
-            isRotating = true;
-            curRotateAngel = 0;
             Destroy(_lastBlock.gameObject);
             LastBlock = block2rotate;
-            //Debug.Log("rotate " + block1 + "   " + block2);
+            pointOfRotate = new Vector3(block2.localPosition.x, 0, 0);
+            isRotating = true;
+            curRotateAngel = 0;
         }
     }
 
@@ -88,8 +88,7 @@ public class LevelController : Singleton<LevelController>
     {
         if (isRotating)
         {
-            Vector3 pointOfRotate = new Vector3(block2.localPosition.x, 0, 0);
-            float rotate = Time.deltaTime*222f;
+            float rotate = Time.deltaTime*22f;
             curRotateAngel += rotate;
             Debug.Log(curRotateAngel + "   " + rotate);
             if (curRotateAngel > 90)
@@ -137,7 +136,8 @@ public class LevelController : Singleton<LevelController>
     private void CalcPosForBlock(Block block, Block oldBlock)
     {
         Vector2 start = new Vector2(oldBlock.transform.position.x + oldBlock.width, oldBlock.transform.position.y + oldBlock.heightR);
-        var newY = GetRandom(Mathf.Clamp(start.x + JumpHeight, minY, maxY), Mathf.Clamp(start.y - JumpHeight, minY + oldBlock.heightR, maxY));
+        //var newY = Mathf.Clamp(start.y + JumpHeight, minY, maxY);
+        var newY = GetRandom(Mathf.Clamp(start.y + JumpHeight, minY, maxY), Mathf.Clamp(start.y - JumpHeight, minY + oldBlock.heightR, maxY));
         float deltaX;
         bool isHeigher = (newY > start.y);
         if (isHeigher)

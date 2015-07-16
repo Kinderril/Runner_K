@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Block : MonoBehaviour {
-
-	// Use this for initialization
+public class Block : MonoBehaviour 
+{
     public float width = 4;
     public float heightL = 1;
     public float heightR = 1;
@@ -12,7 +11,6 @@ public class Block : MonoBehaviour {
 	
 	}
 	
-	// Update is called once per frame
 	void Update () {
 	
 	}
