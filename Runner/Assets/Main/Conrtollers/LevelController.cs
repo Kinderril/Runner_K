@@ -33,6 +33,7 @@ public class LevelController : Singleton<LevelController>
             if (_lastBlock != null)
                 RemoveBlock(_lastBlock);
             _lastBlock = value;
+            _lastBlock.SetLast();
         }
     }
 
@@ -72,8 +73,8 @@ public class LevelController : Singleton<LevelController>
             Block blockP = GetRandomBlockPrefab();
             var block2rotate = Instantiate(blockP.gameObject).GetComponent<Block>();
             block2rotate.transform.SetParent(transform);
-            block2rotate.transform.localRotation = Quaternion.Euler(new Vector3(0,90,0));
-            block2rotate.transform.localPosition = new Vector3(currentBlock.transform.localPosition.x + currentBlock.GetComponent<Block>().width, 0, currentBlock.width);
+            block2rotate.transform.localRotation = Quaternion.Euler(new Vector3(0,-90,0));
+            block2rotate.transform.localPosition = new Vector3(currentBlock.transform.localPosition.x + currentBlock.GetComponent<Block>().width, 0, blockP.width/2);
             block1 = currentBlock.transform;
             block2 = block2rotate.transform;
             Destroy(_lastBlock.gameObject);
@@ -88,7 +89,7 @@ public class LevelController : Singleton<LevelController>
     {
         if (isRotating)
         {
-            float rotate = Time.deltaTime*22f;
+            float rotate = Time.deltaTime*50;
             curRotateAngel += rotate;
             Debug.Log(curRotateAngel + "   " + rotate);
             if (curRotateAngel > 90)
@@ -129,6 +130,7 @@ public class LevelController : Singleton<LevelController>
         block.transform.position = oldPos;*/
         CalcPosForBlock(block, _lastBlock);
         currentBlock = _lastBlock;
+        currentBlock.SetCurrent();
         LastBlock = block;
 
     }
