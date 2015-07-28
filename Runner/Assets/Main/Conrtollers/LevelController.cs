@@ -75,12 +75,14 @@ public class LevelController : Singleton<LevelController>
             block2rotate.transform.SetParent(transform);
             block2rotate.transform.localRotation = Quaternion.Euler(new Vector3(0,-90,0));
             block2rotate.transform.localPosition = new Vector3(currentBlock.transform.localPosition.x + currentBlock.GetComponent<Block>().width, 0, blockP.width/2);
+
+            blockP.PreRotatePos = block2rotate.transform.localPosition;
             block1 = currentBlock.transform;
             block2 = block2rotate.transform;
             Destroy(_lastBlock.gameObject);
             LastBlock = block2rotate;
             pointOfRotate = new Vector3(block2.localPosition.x, 0, 0);
-            isRotating = true;
+            blockP.IsRotate = isRotating = true;
             curRotateAngel = 0;
         }
     }
@@ -89,9 +91,8 @@ public class LevelController : Singleton<LevelController>
     {
         if (isRotating)
         {
-            float rotate = Time.deltaTime*50;
+            float rotate = Time.deltaTime*90;
             curRotateAngel += rotate;
-            Debug.Log(curRotateAngel + "   " + rotate);
             if (curRotateAngel > 90)
             {
                 float ang = curRotateAngel - rotate;
@@ -100,6 +101,7 @@ public class LevelController : Singleton<LevelController>
                 isRotating = false;
                 var p = block2.transform.localPosition;
                 block2.transform.localPosition = new Vector3(p.x,p.y,0);
+                block2.GetComponent<Block>().IsRotate = false;
                 Debug.Log(rotate);
             }
             block2.RotateAround(pointOfRotate, Vector3.up, rotate);
@@ -109,36 +111,26 @@ public class LevelController : Singleton<LevelController>
 
     public void PutBlock()
     {
-        //Vector2 oldPos = new Vector2(_lastBlock.transform.position.x + _lastBlock.width / 2, _lastBlock.transform.position.y);
-
         Block blockP = GetRandomBlockPrefab();
         var block = Instantiate(blockP.gameObject).GetComponent<Block>();
         block.transform.SetParent(transform,true);
-        /*
-        var newY = GetRandom(Mathf.Clamp(oldPos.y + JumpHeight, minY, maxY), Mathf.Clamp(oldPos.y - JumpHeight, minY, maxY));
-        float deltaX;
-        if (newY > oldPos.y)
-        {
-            deltaX = JumpWidth + (JumpWidth-(newY-oldPos.y))*JumpHeight/JumpWidth;
-        }
-        else
-        {
-            deltaX = JumpWidth*2 + (oldPos.y - newY)*JumpWidth/oldPos.y;
-        }
-        oldPos.x = deltaX + oldPos.x + block.width/2;
-        oldPos.y = newY;
-        block.transform.position = oldPos;*/
         CalcPosForBlock(block, _lastBlock);
         currentBlock = _lastBlock;
         currentBlock.SetCurrent();
         LastBlock = block;
-
     }
 
     private void CalcPosForBlock(Block block, Block oldBlock)
     {
-        Vector2 start = new Vector2(oldBlock.transform.position.x + oldBlock.width, oldBlock.transform.position.y + oldBlock.heightR);
-        //var newY = Mathf.Clamp(start.y + JumpHeight, minY, maxY);
+        Vector2 start;
+        if (oldBlock.IsRotate)
+        {
+            start = new Vector2(oldBlock.PreRotatePos.x + oldBlock.PreRotatePos.z + oldBlock.width, oldBlock.PreRotatePos.y + oldBlock.heightR);
+        }
+        else
+        {
+            start = new Vector2(oldBlock.transform.position.x + oldBlock.width, oldBlock.transform.position.y + oldBlock.heightR);
+        }
         var newY = GetRandom(Mathf.Clamp(start.y + JumpHeight, minY, maxY), Mathf.Clamp(start.y - JumpHeight, minY + oldBlock.heightR, maxY));
         float deltaX;
         bool isHeigher = (newY > start.y);
